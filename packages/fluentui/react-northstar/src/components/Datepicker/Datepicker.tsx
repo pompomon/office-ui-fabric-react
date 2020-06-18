@@ -13,8 +13,35 @@ import Input from '../Input/Input';
 import Button from '../Button/Button';
 import { CalendarIcon } from '@fluentui/react-icons-northstar';
 import Popup from '../Popup/Popup';
-import { DayOfWeek, IDayGridOptions, FirstWeekOfYear, DateRangeType } from '@fluentui/date-time-utilities';
+import {
+  DayOfWeek,
+  IDayGridOptions,
+  FirstWeekOfYear,
+  DateRangeType,
+  IDateGridStrings,
+  formatMonthDayYear,
+} from '@fluentui/date-time-utilities';
 import DatepickerCalendar from './DatepickerCalendar';
+
+const DEFAULT_STRINGS: IDateGridStrings = {
+  months: [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
+  ],
+  shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  days: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  shortDays: ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
+};
 
 export interface DatepickerProps extends UIComponentProps {
   /** Accessibility behavior if overridden by the user. */
@@ -33,6 +60,7 @@ const Datepicker: React.FC<WithAsProp<DatepickerProps>> & FluentComponentStaticP
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState('');
   const weeksToShow = 4;
+  const valueFormatter = date => formatMonthDayYear(date, DEFAULT_STRINGS);
   const today = new Date();
   const calendarOptions: IDayGridOptions = {
     selectedDate: today,
@@ -83,9 +111,10 @@ const Datepicker: React.FC<WithAsProp<DatepickerProps>> & FluentComponentStaticP
               <DatepickerCalendar
                 {...calendarOptions}
                 onDaySelect={day => {
-                  setValue(day.originalDate.toString());
+                  setValue(valueFormatter(day.originalDate));
                   setOpen(false);
                 }}
+                localizedStrings={DEFAULT_STRINGS}
               />
             }
             trapFocus

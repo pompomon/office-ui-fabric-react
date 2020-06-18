@@ -10,8 +10,8 @@ import { ThemeContext } from 'react-fela';
 import { FluentComponentStaticProps, ProviderContextPrepared, WithAsProp, withSafeTypeForAs } from '../../types';
 import { commonPropTypes, createShorthandFactory, UIComponentProps } from '../../utils';
 import Grid from '../Grid/Grid';
-import { IDayGridOptions, getDayGrid, IDay, DAYS_IN_WEEK } from '@fluentui/date-time-utilities';
-import Box from '../Box/Box';
+import { IDayGridOptions, getDayGrid, IDay, DAYS_IN_WEEK, IDateGridStrings } from '@fluentui/date-time-utilities';
+import Text from '../Text/Text';
 import Button from '../Button/Button';
 
 export interface DatepickerCalendarProps extends UIComponentProps, IDayGridOptions {
@@ -19,9 +19,9 @@ export interface DatepickerCalendarProps extends UIComponentProps, IDayGridOptio
   accessibility?: Accessibility<DatepickerCalendarBehaviorProps>;
   /** Callback on date cell selection */
   onDaySelect?: (IDay) => void;
+  /** Localized labels */
+  localizedStrings?: IDateGridStrings;
 }
-
-const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 export type DatepickerCalendarStylesProps = never;
 
@@ -45,6 +45,7 @@ const DatepickerCalendar: React.FC<WithAsProp<DatepickerCalendarProps>> &
     dateRangeType,
     weeksToShow,
     onDaySelect,
+    localizedStrings,
   } = props;
   const ElementType = getElementType(props);
   const unhandledProps = useUnhandledProps(DatepickerCalendar.handledProps, props);
@@ -85,7 +86,7 @@ const DatepickerCalendar: React.FC<WithAsProp<DatepickerCalendarProps>> &
         >
           <Grid rows={weeksToShow + 1} columns={DAYS_IN_WEEK}>
             {_.times(DAYS_IN_WEEK, dayNumber => (
-              <Box content={days[(dayNumber + firstDayOfWeek) % DAYS_IN_WEEK]} />
+              <Text align="center" content={localizedStrings.shortDays[(dayNumber + firstDayOfWeek) % DAYS_IN_WEEK]} />
             ))}
             {_.map(grid, week =>
               _.map(week, (day: IDay) => (
@@ -96,6 +97,7 @@ const DatepickerCalendar: React.FC<WithAsProp<DatepickerCalendarProps>> &
                   onClick={() => {
                     onDaySelect(day);
                   }}
+                  text
                 />
               )),
             )}
@@ -113,6 +115,7 @@ DatepickerCalendar.displayName = 'DatepickerCalendar';
 DatepickerCalendar.propTypes = {
   ...commonPropTypes.createCommon(),
   onDaySelect: PropTypes.func,
+  localizedStrings: PropTypes.object as PropTypes.Validator<IDateGridStrings>,
 };
 
 DatepickerCalendar.defaultProps = {
