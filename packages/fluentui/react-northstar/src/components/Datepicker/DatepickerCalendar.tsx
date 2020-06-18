@@ -17,6 +17,8 @@ import Button from '../Button/Button';
 export interface DatepickerCalendarProps extends UIComponentProps, IDayGridOptions {
   /** Accessibility behavior if overridden by the user. */
   accessibility?: Accessibility<DatepickerCalendarBehaviorProps>;
+  /** Callback on date cell selection */
+  onDaySelect?: (IDay) => void;
 }
 
 const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -42,6 +44,7 @@ const DatepickerCalendar: React.FC<WithAsProp<DatepickerCalendarProps>> &
     firstWeekOfYear,
     dateRangeType,
     weeksToShow,
+    onDaySelect,
   } = props;
   const ElementType = getElementType(props);
   const unhandledProps = useUnhandledProps(DatepickerCalendar.handledProps, props);
@@ -86,7 +89,14 @@ const DatepickerCalendar: React.FC<WithAsProp<DatepickerCalendarProps>> &
             ))}
             {_.map(grid, week =>
               _.map(week, (day: IDay) => (
-                <Button key={day.key} content={day.date} aria-label={`Date ${day.originalDate.toString()}`} />
+                <Button
+                  key={day.key}
+                  content={day.date}
+                  aria-label={`Date ${day.originalDate.toString()}`}
+                  onClick={() => {
+                    onDaySelect(day);
+                  }}
+                />
               )),
             )}
           </Grid>
@@ -102,6 +112,7 @@ DatepickerCalendar.displayName = 'DatepickerCalendar';
 
 DatepickerCalendar.propTypes = {
   ...commonPropTypes.createCommon(),
+  onDaySelect: PropTypes.func,
 };
 
 DatepickerCalendar.defaultProps = {

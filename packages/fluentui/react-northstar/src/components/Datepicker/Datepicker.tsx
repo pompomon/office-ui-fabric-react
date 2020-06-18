@@ -31,6 +31,7 @@ const Datepicker: React.FC<WithAsProp<DatepickerProps>> & FluentComponentStaticP
   setStart();
   const datepickerRef = React.useRef<HTMLElement>();
   const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState('');
   const weeksToShow = 4;
   const today = new Date();
   const calendarOptions: IDayGridOptions = {
@@ -74,11 +75,19 @@ const Datepicker: React.FC<WithAsProp<DatepickerProps>> & FluentComponentStaticP
             ...unhandledProps,
           })}
         >
-          <Input readOnly onClick={showCalendarGrid} />
+          <Input readOnly onClick={showCalendarGrid} value={value} />
           <Popup
             open={open}
             onOpenChange={(e, { open }) => setOpen(open)}
-            content={<DatepickerCalendar {...calendarOptions} />}
+            content={
+              <DatepickerCalendar
+                {...calendarOptions}
+                onDaySelect={day => {
+                  setValue(day.originalDate.toString());
+                  setOpen(false);
+                }}
+              />
+            }
             trapFocus
           >
             <Button icon={<CalendarIcon />} title="Open calendar" iconOnly />
